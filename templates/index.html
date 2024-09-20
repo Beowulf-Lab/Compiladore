@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi primer analizador web</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mi primer analizador</h1>
+        <form method="post" aria-label="Formulario de análisis">
+            <textarea name="text" rows="10" cols="50" placeholder="Escribe tu código aquí..." required></textarea>
+            <br><br>
+            <input type="submit" value="Analizar">
+            <input type="button" value="Borrar" onclick="clearTextarea()">
+        </form>
+        <br><br>
+
+        <section>
+            <h2>Analizador Léxico</h2>
+            <div class="tables-container">
+                {% if line_info %}
+                <div class="line-info-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Línea</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for line, tipo, valor in line_info %}
+                            <tr>
+                                <td>{{ line }}</td>
+                                <td>{{ tipo }}</td>
+                                <td>{{ valor }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        <br><br>
+
+        <section>
+            <h2>Analizador Sintáctico</h2>
+            {% if sintactico_info %}
+            <table class="sintactico-table">
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Tipo de Estructura</th>
+                        <th>Estructura Correcta</th>
+                        <th>Estructura Incorrecta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sintactico in sintactico_info %}
+                    <tr>
+                        <td>{{ sintactico[0] }}</td>
+                        <td>
+                            {{ sintactico[1] }}
+                        </td>
+                        <td>{{ 'X' if sintactico[2] == 'X' else '' }}</td>
+                        <td>
+                            {% if sintactico[1] == 'hola' or sintactico[1] == 'mundo' %}
+                                ID
+                            {% else %}
+                                {{ 'X' if sintactico[3] == 'X' else '' }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </section>
+    </div>
+
+    <script>
+        function clearTextarea() {
+            document.querySelector('textarea[name="text"]').value = '';
+            const tableBodyLexico = document.querySelector('.line-info-table table tbody');
+            if (tableBodyLexico) {
+                tableBodyLexico.innerHTML = '';
+            }
+            const tableBodySintactico = document.querySelector('.sintactico-table tbody');
+            if (tableBodySintactico) {
+                tableBodySintactico.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
